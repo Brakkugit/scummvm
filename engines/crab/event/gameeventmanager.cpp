@@ -118,9 +118,9 @@ void Manager::handleEvents(Info &info, const Common::String &playerId, Common::E
 				}
 
 				if (_oh.handleDlboxEvents(event)) {
+					_oh.onExit();
 					_eventMap[info.curLocID()].nextEvent(_activeSeq, info, playerId, result, _endSeq);
 					_oh._showJournal = false;
-					_intro.onExit();
 				}
 			}
 			break;
@@ -148,9 +148,9 @@ void Manager::handleEvents(Info &info, const Common::String &playerId, Common::E
 
 				int choice = _reply.handleEvents(info, g_engine->_eventStore->_con[_curEvent->_special], _curEvent->_title, _oh, event);
 				if (choice >= 0) {
+					_reply.onExit();
 					_eventMap[info.curLocID()].nextEvent(_activeSeq, info, playerId, result, _endSeq, choice);
 					_oh._showJournal = false;
-					_intro.onExit();
 				}
 			}
 			break;
@@ -171,8 +171,8 @@ void Manager::handleEvents(Info &info, const Common::String &playerId, Common::E
 					_intro._showTraits = false;
 			} else {
 				if (_intro.handleEvents(event)) {
-					_eventMap[info.curLocID()].nextEvent(_activeSeq, info, playerId, result, _endSeq);
 					_intro.onExit();
+					_eventMap[info.curLocID()].nextEvent(_activeSeq, info, playerId, result, _endSeq);
 				}
 
 				if (_intro._showTraits)
@@ -292,14 +292,14 @@ void Manager::calcActiveSeq(Info &info, pyrodactyl::level::Level &level, const R
 
 		switch (_curEvent->_type) {
 		case EVENT_DIALOG:
-			_intro.onEntry(_curEvent->_dialog);
+			_oh.onEntry(_curEvent->_dialog);
 			break;
 		case EVENT_ANIM:
 			g_engine->_eventStore->_anim[_curEvent->_special].start();
 			break;
 		case EVENT_REPLY:
 			_reply.cache(info, g_engine->_eventStore->_con[_curEvent->_special]);
-			_intro.onEntry(_curEvent->_dialog);
+			_reply.onEntry(_curEvent->_dialog);
 			break;
 		case EVENT_SPLASH:
 			_intro.onEntry(_curEvent->_dialog);
